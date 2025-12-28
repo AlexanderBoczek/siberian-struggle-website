@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siberian Struggle - Survive the Cold</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --frost-white: #e8f4f8;
+            --ice-blue: #a8d5e5;
+            --deep-blue: #1a3a4a;
+            --night-blue: #0d1f2d;
+            --ember-orange: #e85a1b;
+            --ember-glow: #ff7b3d;
+            --snow-gray: #c4d4dc;
+            --dark-frost: #2a4a5a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--night-blue);
+            color: var(--frost-white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Snowfall animation */
+        .snowfall {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+            animation: fall linear infinite;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0.3;
+            }
+        }
+
+        /* Frost border effect */
+        .frost-border {
+            position: relative;
+        }
+
+        .frost-border::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--ice-blue) 20%, 
+                var(--frost-white) 50%, 
+                var(--ice-blue) 80%, 
+                transparent
+            );
+            opacity: 0.6;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 6rem 2rem 2rem;
+            position: relative;
+            background: 
+                radial-gradient(ellipse at 50% 0%, rgba(168, 213, 229, 0.1) 0%, transparent 50%),
+                linear-gradient(180deg, var(--night-blue) 0%, var(--deep-blue) 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(0deg, var(--deep-blue), transparent);
+            pointer-events: none;
+        }
+
+        /* Frozen mountains silhouette */
+        .mountains {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 300px;
+            opacity: 0.15;
+            background: 
+                linear-gradient(135deg, transparent 40%, var(--ice-blue) 40%, var(--ice-blue) 42%, transparent 42%),
+                linear-gradient(225deg, transparent 40%, var(--ice-blue) 40%, var(--ice-blue) 42%, transparent 42%),
+                linear-gradient(155deg, transparent 45%, var(--snow-gray) 45%, var(--snow-gray) 47%, transparent 47%),
+                linear-gradient(205deg, transparent 45%, var(--snow-gray) 45%, var(--snow-gray) 47%, transparent 47%);
+            background-size: 300px 300px, 300px 300px, 200px 200px, 200px 200px;
+            background-position: 0 100%, 150px 100%, 50px 100%, 250px 100%;
+            background-repeat: repeat-x;
+        }
+
+        .logo-container {
+            position: relative;
+            z-index: 10;
+        }
+
+        .game-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(4rem, 15vw, 10rem);
+            letter-spacing: 0.15em;
+            line-height: 0.9;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, 
+                var(--frost-white) 0%, 
+                var(--ice-blue) 50%, 
+                var(--snow-gray) 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            filter: drop-shadow(0 0 30px rgba(168, 213, 229, 0.3));
+            animation: titleGlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 30px rgba(168, 213, 229, 0.2)); }
+            100% { filter: drop-shadow(0 0 50px rgba(168, 213, 229, 0.4)); }
+        }
+
+        .tagline {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            font-weight: 300;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--snow-gray);
+            margin-top: 1rem;
+            opacity: 0.8;
+        }
+
+        .hero-description {
+            max-width: 600px;
+            margin: 3rem auto;
+            font-size: 1.1rem;
+            color: var(--snow-gray);
+            font-weight: 300;
+        }
+
+        /* CTA Buttons */
+        .cta-container {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 0.1em;
+            text-decoration: none;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-steam {
+            background: linear-gradient(135deg, var(--deep-blue), var(--dark-frost));
+            color: var(--frost-white);
+            border: 2px solid var(--ice-blue);
+        }
+
+        .btn-steam::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(168, 213, 229, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-steam:hover::before {
+            left: 100%;
+        }
+
+        .btn-steam:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(168, 213, 229, 0.3);
+            border-color: var(--frost-white);
+        }
+
+        .btn-discord {
+            background: transparent;
+            color: var(--ice-blue);
+            border: 2px solid var(--dark-frost);
+        }
+
+        .btn-discord:hover {
+            background: var(--dark-frost);
+            border-color: var(--ice-blue);
+            transform: translateY(-3px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 2rem;
+            background: var(--deep-blue);
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            text-align: center;
+            letter-spacing: 0.1em;
+            margin-bottom: 4rem;
+            color: var(--frost-white);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(26, 58, 74, 0.8), rgba(13, 31, 45, 0.9));
+            padding: 2.5rem;
+            border: 1px solid rgba(168, 213, 229, 0.1);
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0;
+            background: linear-gradient(180deg, var(--ember-orange), var(--ember-glow));
+            transition: height 0.4s ease;
+        }
+
+        .feature-card:hover::before {
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(168, 213, 229, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .feature-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            color: var(--frost-white);
+        }
+
+        .feature-description {
+            color: var(--snow-gray);
+            font-weight: 300;
+            font-size: 0.95rem;
+        }
+
+        /* Screenshots Section */
+        .screenshots {
+            padding: 8rem 2rem;
+            background: 
+                radial-gradient(ellipse at 80% 50%, rgba(232, 90, 27, 0.05) 0%, transparent 50%),
+                var(--night-blue);
+        }
+
+        .screenshots-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .screenshot-placeholder {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .screenshot-item {
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, var(--deep-blue), var(--dark-frost));
+            border: 1px solid rgba(168, 213, 229, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+            color: var(--snow-gray);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .screenshot-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, transparent 40%, rgba(168, 213, 229, 0.05) 50%, transparent 60%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .screenshot-item:hover {
+            border-color: var(--ice-blue);
+            transform: scale(1.02);
+        }
+
+        /* About Section */
+        .about {
+            padding: 8rem 2rem;
+            background: var(--deep-blue);
+            text-align: center;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-text {
+            font-size: 1.2rem;
+            color: var(--snow-gray);
+            font-weight: 300;
+            line-height: 1.8;
+            margin-bottom: 3rem;
+        }
+
+        .warmth-meter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 3rem 0;
+        }
+
+        .meter-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+        }
+
+        .meter-bar {
+            width: 200px;
+            height: 12px;
+            background: var(--night-blue);
+            border: 1px solid var(--dark-frost);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            height: 100%;
+            width: 30%;
+            background: linear-gradient(90deg, var(--ember-orange), var(--ember-glow));
+            animation: meterPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes meterPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Newsletter Section */
+        .newsletter {
+            padding: 6rem 2rem;
+            background: 
+                linear-gradient(180deg, var(--deep-blue) 0%, var(--night-blue) 100%);
+            text-align: center;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 2rem auto 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 1rem 1.5rem;
+            background: rgba(13, 31, 45, 0.8);
+            border: 1px solid var(--dark-frost);
+            color: var(--frost-white);
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .newsletter-input::placeholder {
+            color: var(--snow-gray);
+            opacity: 0.6;
+        }
+
+        .newsletter-input:focus {
+            outline: none;
+            border-color: var(--ice-blue);
+            box-shadow: 0 0 20px rgba(168, 213, 229, 0.1);
+        }
+
+        .newsletter-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--ember-orange), var(--ember-glow));
+            border: none;
+            color: var(--frost-white);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .newsletter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(232, 90, 27, 0.3);
+        }
+
+        /* Impressum */
+        .impressum {
+            padding: 4rem 2rem;
+            background: var(--night-blue);
+            border-top: 1px solid rgba(168, 213, 229, 0.1);
+        }
+
+        .impressum-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .impressum-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.1em;
+            color: var(--frost-white);
+            margin-bottom: 1.5rem;
+        }
+
+        .impressum-text {
+            color: var(--snow-gray);
+            font-size: 0.9rem;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        .impressum-text strong {
+            color: var(--frost-white);
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 2rem;
+            background: var(--night-blue);
+            text-align: center;
+            border-top: 1px solid rgba(168, 213, 229, 0.1);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .social-link {
+            color: var(--snow-gray);
+            text-decoration: none;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .social-link:hover {
+            color: var(--ice-blue);
+        }
+
+        .copyright {
+            color: var(--dark-frost);
+            font-size: 0.9rem;
+        }
+
+        .footer-link {
+            color: var(--dark-frost);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--ice-blue);
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, var(--night-blue) 0%, transparent 100%);
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.1em;
+            color: var(--frost-white);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            color: var(--ice-blue);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--snow-gray);
+            text-decoration: none;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--ice-blue);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--frost-white);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .hero {
+                padding: 8rem 1.5rem 4rem;
+            }
+
+            .cta-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                text-align: center;
+            }
+
+            .features, .screenshots, .about, .newsletter {
+                padding: 4rem 1.5rem;
+            }
+
+            .warmth-meter {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Snowfall Effect -->
+    <div class="snowfall" id="snowfall"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="index.html" class="nav-logo">Siberian Struggle</a>
+        <ul class="nav-links">
+            <li><a href="index.html" class="nav-link active">Home</a></li>
+            <li><a href="devlog.html" class="nav-link">Dev Diaries</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="mountains"></div>
+        <div class="logo-container">
+            <h1 class="game-title">Siberian<br>Struggle</h1>
+            <p class="tagline">Survive the Cold</p>
+        </div>
+        <p class="hero-description">
+            In the unforgiving wilderness of Siberia, warmth is your most precious resource. 
+            Gather wood, build fires, hunt for food, and fight against the elements in this 
+            first-person survival experience.
+        </p>
+        <div class="cta-container">
+            <a href="#" class="btn btn-steam">Wishlist on Steam</a>
+            <a href="https://discord.gg/heFBjNgSu8" target="_blank" class="btn btn-discord">Join Discord</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features frost-border">
+        <h2 class="section-title">Core Mechanics</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🔥</span>
+                <h3 class="feature-title">Warmth System</h3>
+                <p class="feature-description">
+                    Your body temperature is constantly dropping. Build campfires, find shelter, 
+                    and manage your warmth to survive the deadly Siberian cold.
+                </p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🪓</span>
+                <h3 class="feature-title">Resource Gathering</h3>
+                <p class="feature-description">
+                    Chop trees for firewood, hunt wildlife for food, and scavenge the frozen 
+                    landscape for supplies to keep yourself alive.
+                </p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🥶</span>
+                <h3 class="feature-title">Dynamic Weather</h3>
+                <p class="feature-description">
+                    Face blizzards, freezing nights, and harsh weather events that will 
+                    test your survival skills to the limit.
+                </p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🍖</span>
+                <h3 class="feature-title">Hunger & Health</h3>
+                <p class="feature-description">
+                    Hunt, cook, and eat to maintain your energy. A hungry survivor 
+                    won't last long in the frozen wilderness.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots Section -->
+    <section class="screenshots">
+        <div class="screenshots-container">
+            <h2 class="section-title">Screenshots</h2>
+            <div class="screenshot-placeholder">
+                <div class="screenshot-item">Coming Soon</div>
+                <div class="screenshot-item">Coming Soon</div>
+                <div class="screenshot-item">Coming Soon</div>
+                <div class="screenshot-item">Coming Soon</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about frost-border">
+        <div class="about-content">
+            <h2 class="section-title">The Struggle is Real</h2>
+            <p class="about-text">
+                Siberian Struggle is a first-person survival game where every decision matters. 
+                Set in the harsh Siberian wilderness, you must balance your basic needs while 
+                battling the most dangerous enemy of all — the cold. There are no second chances 
+                when the temperature drops below freezing.
+            </p>
+            <div class="warmth-meter">
+                <span class="meter-label">Warmth</span>
+                <div class="meter-bar">
+                    <div class="meter-fill"></div>
+                </div>
+                <span class="meter-label">Critical</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter">
+        <h2 class="section-title">Stay Warm, Stay Informed</h2>
+        <p style="color: var(--snow-gray); margin-bottom: 1rem;">
+            Get development updates and be the first to know about Early Access.
+        </p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Thanks for subscribing!');">
+            <input type="email" class="newsletter-input" placeholder="Enter your email" required>
+            <button type="submit" class="newsletter-btn">Subscribe</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="social-links">
+            <a href="#" class="social-link">
+                <span>Steam</span>
+            </a>
+            <a href="https://discord.gg/heFBjNgSu8" target="_blank" class="social-link">
+                <span>Discord</span>
+            </a>
+            <a href="https://x.com/sibstru" target="_blank" class="social-link">
+                <span>X</span>
+            </a>
+            <a href="https://www.youtube.com/@sibstru" target="_blank" class="social-link">
+                <span>YouTube</span>
+            </a>
+            <a href="https://www.reddit.com/r/siberianstruggle/" target="_blank" class="social-link">
+                <span>Reddit</span>
+            </a>
+            <a href="impressum.html" class="social-link">
+                <span>Impressum</span>
+            </a>
+        </div>
+        <p class="copyright">© 2025 Siberian Struggle. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Snowfall effect
+        function createSnowfall() {
+            const snowfall = document.getElementById('snowfall');
+            const flakeCount = 50;
+
+            for (let i = 0; i < flakeCount; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.innerHTML = '❄';
+                flake.style.left = Math.random() * 100 + '%';
+                flake.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                flake.style.animationDelay = (Math.random() * 10) + 's';
+                flake.style.fontSize = (Math.random() * 0.8 + 0.4) + 'rem';
+                flake.style.opacity = Math.random() * 0.6 + 0.2;
+                snowfall.appendChild(flake);
+            }
+        }
+
+        // Parallax effect on scroll
+        function initParallax() {
+            const hero = document.querySelector('.hero');
+            const title = document.querySelector('.game-title');
+
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const heroHeight = hero.offsetHeight;
+
+                if (scrolled < heroHeight) {
+                    title.style.transform = `translateY(${scrolled * 0.3}px)`;
+                    title.style.opacity = 1 - (scrolled / heroHeight) * 0.5;
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            createSnowfall();
+            initParallax();
+        });
+    </script>
+</body>
+</html>

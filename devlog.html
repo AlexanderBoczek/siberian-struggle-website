@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Diaries - Siberian Struggle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --frost-white: #e8f4f8;
+            --ice-blue: #a8d5e5;
+            --deep-blue: #1a3a4a;
+            --night-blue: #0d1f2d;
+            --ember-orange: #e85a1b;
+            --ember-glow: #ff7b3d;
+            --snow-gray: #c4d4dc;
+            --dark-frost: #2a4a5a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--night-blue);
+            color: var(--frost-white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Snowfall animation */
+        .snowfall {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+            animation: fall linear infinite;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0.3;
+            }
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, var(--night-blue) 0%, transparent 100%);
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.1em;
+            color: var(--frost-white);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            color: var(--ice-blue);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--snow-gray);
+            text-decoration: none;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--ice-blue);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--frost-white);
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+            background: 
+                radial-gradient(ellipse at 50% 0%, rgba(168, 213, 229, 0.1) 0%, transparent 50%),
+                linear-gradient(180deg, var(--night-blue) 0%, var(--deep-blue) 100%);
+        }
+
+        .page-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 10vw, 6rem);
+            letter-spacing: 0.1em;
+            background: linear-gradient(180deg, 
+                var(--frost-white) 0%, 
+                var(--ice-blue) 50%, 
+                var(--snow-gray) 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 30px rgba(168, 213, 229, 0.3));
+        }
+
+        .page-subtitle {
+            color: var(--snow-gray);
+            font-size: 1.2rem;
+            font-weight: 300;
+            margin-top: 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* Dev Diary Entries */
+        .devlog-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .devlog-entry {
+            background: linear-gradient(135deg, rgba(26, 58, 74, 0.6), rgba(13, 31, 45, 0.8));
+            border: 1px solid rgba(168, 213, 229, 0.1);
+            margin-bottom: 2rem;
+            position: relative;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        .devlog-entry::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--ember-orange), var(--ember-glow));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .devlog-entry:hover::before {
+            opacity: 1;
+        }
+
+        .devlog-entry:hover {
+            border-color: rgba(168, 213, 229, 0.3);
+            transform: translateX(5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .devlog-header {
+            padding: 2rem 2rem 1rem;
+            border-bottom: 1px solid rgba(168, 213, 229, 0.1);
+        }
+
+        .devlog-date {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            color: var(--ember-orange);
+            margin-bottom: 0.5rem;
+        }
+
+        .devlog-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 0.05em;
+            color: var(--frost-white);
+        }
+
+        .devlog-content {
+            padding: 1.5rem 2rem 2rem;
+        }
+
+        .devlog-text {
+            color: var(--snow-gray);
+            font-weight: 300;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .devlog-tags {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .devlog-tag {
+            padding: 0.3rem 0.8rem;
+            background: rgba(168, 213, 229, 0.1);
+            border: 1px solid rgba(168, 213, 229, 0.2);
+            font-size: 0.8rem;
+            color: var(--ice-blue);
+            font-weight: 400;
+            letter-spacing: 0.05em;
+        }
+
+        .devlog-media {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, var(--deep-blue), var(--dark-frost));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--snow-gray);
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .devlog-media::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, transparent 40%, rgba(168, 213, 229, 0.05) 50%, transparent 60%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 6rem 2rem;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 0.1em;
+            color: var(--frost-white);
+            margin-bottom: 1rem;
+        }
+
+        .empty-text {
+            color: var(--snow-gray);
+            font-weight: 300;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Impressum */
+        .impressum {
+            padding: 4rem 2rem;
+            background: var(--night-blue);
+            border-top: 1px solid rgba(168, 213, 229, 0.1);
+        }
+
+        .impressum-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .impressum-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.1em;
+            color: var(--frost-white);
+            margin-bottom: 1.5rem;
+        }
+
+        .impressum-text {
+            color: var(--snow-gray);
+            font-size: 0.9rem;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        .impressum-text strong {
+            color: var(--frost-white);
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 2rem;
+            background: var(--night-blue);
+            text-align: center;
+            border-top: 1px solid rgba(168, 213, 229, 0.1);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            color: var(--snow-gray);
+            text-decoration: none;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            transition: color 0.3s ease;
+        }
+
+        .social-link:hover {
+            color: var(--ice-blue);
+        }
+
+        .copyright {
+            color: var(--dark-frost);
+            font-size: 0.9rem;
+        }
+
+        .footer-link {
+            color: var(--dark-frost);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--ice-blue);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .page-header {
+                padding: 8rem 1.5rem 3rem;
+            }
+
+            .devlog-container {
+                padding: 2rem 1rem;
+            }
+
+            .devlog-header,
+            .devlog-content {
+                padding: 1.5rem;
+            }
+
+            .devlog-title {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Snowfall Effect -->
+    <div class="snowfall" id="snowfall"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="index.html" class="nav-logo">Siberian Struggle</a>
+        <ul class="nav-links">
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="devlog.html" class="nav-link active">Dev Diaries</a></li>
+        </ul>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <h1 class="page-title">Dev Diaries</h1>
+        <p class="page-subtitle">Follow the journey of building Siberian Struggle</p>
+    </header>
+
+    <!-- Dev Diary Entries -->
+    <main class="devlog-container">
+
+        <!-- Example Entry 1 -->
+        <article class="devlog-entry">
+            <div class="devlog-media">Screenshot / Video Placeholder</div>
+            <div class="devlog-header">
+                <p class="devlog-date">December 2024</p>
+                <h2 class="devlog-title">Dev Diary #1 - The Beginning</h2>
+            </div>
+            <div class="devlog-content">
+                <p class="devlog-text">
+                    Welcome to the first dev diary for Siberian Struggle! This is where I'll share 
+                    the development progress, challenges, and behind-the-scenes insights into building 
+                    this survival game. Stay tuned for updates on the warmth system, resource gathering, 
+                    and much more.
+                </p>
+                <div class="devlog-tags">
+                    <span class="devlog-tag">Announcement</span>
+                    <span class="devlog-tag">Game Design</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 
+        Template for future entries:
+        
+        <article class="devlog-entry">
+            <div class="devlog-media">Screenshot / Video Placeholder</div>
+            <div class="devlog-header">
+                <p class="devlog-date">Month Year</p>
+                <h2 class="devlog-title">Dev Diary #X - Title</h2>
+            </div>
+            <div class="devlog-content">
+                <p class="devlog-text">
+                    Your content here...
+                </p>
+                <div class="devlog-tags">
+                    <span class="devlog-tag">Tag</span>
+                </div>
+            </div>
+        </article>
+        -->
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="social-links">
+            <a href="#" class="social-link">Steam</a>
+            <a href="https://discord.gg/heFBjNgSu8" target="_blank" class="social-link">Discord</a>
+            <a href="https://x.com/sibstru" target="_blank" class="social-link">X</a>
+            <a href="https://www.youtube.com/@sibstru" target="_blank" class="social-link">YouTube</a>
+            <a href="https://www.reddit.com/r/siberianstruggle/" target="_blank" class="social-link">Reddit</a>
+            <a href="impressum.html" class="social-link">Impressum</a>
+        </div>
+        <p class="copyright">© 2025 Siberian Struggle. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Snowfall effect
+        function createSnowfall() {
+            const snowfall = document.getElementById('snowfall');
+            const flakeCount = 40;
+
+            for (let i = 0; i < flakeCount; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.innerHTML = '❄';
+                flake.style.left = Math.random() * 100 + '%';
+                flake.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                flake.style.animationDelay = (Math.random() * 10) + 's';
+                flake.style.fontSize = (Math.random() * 0.8 + 0.4) + 'rem';
+                flake.style.opacity = Math.random() * 0.6 + 0.2;
+                snowfall.appendChild(flake);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', createSnowfall);
+    </script>
+</body>
+</html>
