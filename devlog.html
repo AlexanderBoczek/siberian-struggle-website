@@ -58,6 +58,7 @@
             font-size: 1rem;
             animation: fall linear infinite;
             text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            will-change: transform, opacity, margin-left;
         }
 
         @keyframes fall {
@@ -69,6 +70,52 @@
                 transform: translateY(100vh) rotate(360deg);
                 opacity: 0.3;
             }
+        }
+
+        /* Wind drift patterns */
+        @keyframes drift {
+            0%, 100% { margin-left: 0; }
+            25% { margin-left: 15px; }
+            75% { margin-left: -15px; }
+        }
+
+        @keyframes drift2 {
+            0%, 100% { margin-left: 0; }
+            33% { margin-left: -20px; }
+            66% { margin-left: 10px; }
+        }
+
+        @keyframes drift3 {
+            0%, 100% { margin-left: 5px; }
+            50% { margin-left: -12px; }
+        }
+
+        /* Wind gust effect */
+        @keyframes gust {
+            0% { margin-left: 0; }
+            50% { margin-left: 40px; }
+            100% { margin-left: 25px; }
+        }
+
+        .snowflake.gusting {
+            animation: fall linear infinite, gust 2s ease-out !important;
+        }
+
+        /* Snow pile on elements */
+        .snow-pile {
+            position: absolute;
+            top: -2px;
+            left: 0;
+            right: 0;
+            height: 0;
+            background: linear-gradient(180deg,
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(232, 244, 248, 0.9) 50%,
+                rgba(200, 220, 230, 0.8) 100%);
+            border-radius: 40% 40% 0 0 / 100% 100% 0 0;
+            pointer-events: none;
+            z-index: 10;
+            transition: height 2s ease;
         }
 
         /* Navigation */
@@ -645,25 +692,8 @@
         </div>
     </div>
 
+    <script src="js/snow.js"></script>
     <script>
-        // Snowfall effect
-        function createSnowfall() {
-            const snowfall = document.getElementById('snowfall');
-            const flakeCount = 40;
-
-            for (let i = 0; i < flakeCount; i++) {
-                const flake = document.createElement('div');
-                flake.className = 'snowflake';
-                flake.innerHTML = '❄';
-                flake.style.left = Math.random() * 100 + '%';
-                flake.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                flake.style.animationDelay = (Math.random() * 10) + 's';
-                flake.style.fontSize = (Math.random() * 0.8 + 0.4) + 'rem';
-                flake.style.opacity = Math.random() * 0.6 + 0.2;
-                snowfall.appendChild(flake);
-            }
-        }
-
         // Cookie consent
         function initCookieConsent() {
             const banner = document.getElementById('cookie-consent');
@@ -687,7 +717,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            createSnowfall();
+            initEnhancedSnowfall();
             initCookieConsent();
         });
     </script>
