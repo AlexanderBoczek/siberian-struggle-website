@@ -85,52 +85,6 @@ class SnowAccumulator {
     }
 }
 
-// Wind Gust System
-class WindSystem {
-    constructor() {
-        this.gustInterval = null;
-        this.isGusting = false;
-    }
-
-    // Trigger a wind gust
-    triggerGust() {
-        if (this.isGusting) return;
-
-        this.isGusting = true;
-        const snowflakes = document.querySelectorAll('.snowflake');
-
-        snowflakes.forEach(flake => {
-            flake.classList.add('gusting');
-        });
-
-        // Remove gust class after animation
-        setTimeout(() => {
-            snowflakes.forEach(flake => {
-                flake.classList.remove('gusting');
-            });
-            this.isGusting = false;
-        }, 2000);
-    }
-
-    // Start random gust system
-    startGusts() {
-        // Check for gust every 20 seconds
-        this.gustInterval = setInterval(() => {
-            // 40% chance of gust
-            if (Math.random() < 0.4) {
-                this.triggerGust();
-            }
-        }, 20000);
-    }
-
-    init() {
-        // First gust after 15-30 seconds
-        setTimeout(() => {
-            this.triggerGust();
-            this.startGusts();
-        }, 15000 + Math.random() * 15000);
-    }
-}
 
 // Get appropriate flake count based on device
 function getFlakeCount() {
@@ -210,10 +164,6 @@ function initEnhancedSnowfall() {
     // Initialize snow accumulation
     const accumulator = new SnowAccumulator();
     accumulator.init();
-
-    // Initialize wind system
-    const wind = new WindSystem();
-    wind.init();
 
     // Handle resize
     window.addEventListener('resize', debouncedResize);
