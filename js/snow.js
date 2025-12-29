@@ -135,7 +135,7 @@ class WindSystem {
 // Get appropriate flake count based on device
 function getFlakeCount() {
     const isMobile = window.innerWidth < 768;
-    return isMobile ? 70 : 120;
+    return isMobile ? 50 : 80;
 }
 
 // Drift patterns for variety
@@ -169,11 +169,11 @@ function createEnhancedSnowfall() {
         // Random animation delay (stagger start)
         flake.style.animationDelay = `${Math.random() * 10}s, ${Math.random() * 2}s`;
 
-        // Random size for depth effect
-        flake.style.fontSize = (Math.random() * 0.8 + 0.4) + 'rem';
+        // Random size for depth effect (less variation: 0.5-0.9rem)
+        flake.style.fontSize = (Math.random() * 0.4 + 0.5) + 'rem';
 
-        // Random opacity for depth effect
-        flake.style.opacity = Math.random() * 0.6 + 0.2;
+        // Consistent opacity (less variation: 0.4-0.6)
+        flake.style.opacity = Math.random() * 0.2 + 0.4;
 
         snowfall.appendChild(flake);
     }
